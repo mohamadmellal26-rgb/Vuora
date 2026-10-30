@@ -1,0 +1,203 @@
+.sidebar {
+  position: fixed; /* لتغطية الشاشة وثباته من بداية الصفحة حتى نهايتها */
+  top: 0;
+  right: 0;
+  width: 16rem;
+  height: 100vh; /* ارتفاع كامل الشاشة */
+  min-height: 0;
+  background-color: rgba(255, 255, 255, 0.75); /* خلفية بيضاء شفافة */
+  backdrop-filter: blur(10px); /* تأثير زجاجي شفاف */
+  -webkit-backdrop-filter: blur(10px);
+  color: #1f1f23; /* لون نص داكن متناسق مع الخلفية الفاتحة */
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  user-select: none;
+  overflow-y: auto;
+  border-left: 1px solid rgba(229, 231, 235, 0.8); /* خط فاصل شفاف وأنيق */
+  direction: rtl;
+  font-family: Inter, Roobert, Helvetica Neue, Helvetica, Arial, sans-serif;
+  z-index: 50; /* لضمان ظهوره فوق المحتوى والبثوث */
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.08); /* ظل جانبي خفيف وناعم */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  color: #1f1f23;
+}
+
+.collapseBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.375rem;
+  border-radius: 0.375rem;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.collapseBtn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.section {
+  margin-bottom: 1.25rem;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.item:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #d1d5db;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.categoryImage {
+  width: 2rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+  background-color: #d1d5db;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.info {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.itemName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f1f23;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  transition: color 0.15s;
+}
+
+.item:hover .itemName {
+  color: #7c3aed; /* لون بنفسجي متناسق ومميز للثيم الفاتح */
+}
+
+.itemSub {
+  font-size: 0.75rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.liveInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #eb0400;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.viewersCount {
+  color: #6b7280;
+}
+
+.showMoreBtn {
+  background: transparent;
+  border: none;
+  color: #7c3aed;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  text-align: right;
+}
+
+.showMoreBtn:hover {
+  text-decoration: underline;
+}
+
+/* تخصيص شريط التمرير */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

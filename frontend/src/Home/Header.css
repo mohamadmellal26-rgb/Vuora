@@ -1,0 +1,197 @@
+.header-home {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.75); /* خلفية بيضاء شفافة */
+  backdrop-filter: blur(12px); /* تأثير زجاجي ضبابي (Frosted Glass) */
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* حد سفلي خفيف وناعم */
+  color: #18181b; /* لون نص داكن وواضح للخلفية الفاتحة */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.header-home-container {
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  box-sizing: border-box;
+  gap: 1rem;
+}
+
+.header-home-section {
+  display: flex;
+  align-items: center;
+}
+
+/* الشعار والقوائم */
+.header-home-brand {
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.header-home-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #18181b; /* لون الشعار داكن ليظهر بوضوح */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.03em;
+}
+
+.header-home-logo span {
+  color: #22C55E;
+}
+
+.header-home-nav-link {
+  color: #3f3f46;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.header-home-nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #22C55E;
+}
+
+/* شريط البحث */
+.header-home-center {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.header-home-search-form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.04); /* خلفية شفافة خفيفة لشريط البحث */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s, background-color 0.2s;
+  height: 34px;
+}
+
+.header-home-search-form:focus-within {
+  border-color: #22C55E;
+  background-color: #ffffff;
+}
+
+.header-home-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #18181b;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  outline: none;
+  text-align: left;
+}
+
+.header-home-search-input::placeholder {
+  color: #71717a;
+}
+
+.header-home-search-btn {
+  background: transparent;
+  border: none;
+  color: #71717a;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: color 0.2s;
+}
+
+.header-home-search-btn:hover {
+  color: #22C55E;
+}
+
+/* الإجراءات والبروفايل */
+.header-home-actions {
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.header-home-promo-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: #27272a;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.header-home-promo-badge:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.header-home-icon-btn {
+  background: transparent;
+  border: none;
+  color: #27272a;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.header-home-icon-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.header-home-badge-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #22C55E;
+  color: #ffffff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.25rem;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.header-home-user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #22C55E;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.header-home-user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+}

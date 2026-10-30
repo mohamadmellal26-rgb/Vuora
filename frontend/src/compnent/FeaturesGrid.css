@@ -1,0 +1,150 @@
+.features-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.features-main-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  .features-main-title {
+    font-size: 3rem;
+  }
+}
+
+.highlight-green {
+  color: #22C55E;
+}
+
+/* تنظيم الشبكة */
+.features-bento {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+@media (min-width: 900px) {
+  .features-bento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* الكارت الأول ممتد بعرض الشاشة: نص يسار وصورة يمين */
+  .feature-card-large {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .feature-card-large .feature-content {
+    flex: 1;
+    order: 1;
+  }
+
+  .feature-card-large .feature-preview {
+    flex: 1.2;
+    order: 2;
+    height: auto; /* إزالة الارتفاع الثابت للصورة الكبرى */
+  }
+}
+
+/* البطاقات العادية */
+.feature-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08);
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.feature-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.feature-description {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.feature-btn {
+  margin-top: 0.5rem;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.65rem 1.35rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+}
+
+.feature-btn:hover {
+  background-color: #16a34a;
+}
+
+.feature-btn:active {
+  transform: scale(0.97);
+}
+
+/* حاوية الصورة بلا قيود للارتفاع */
+.feature-preview {
+  width: 100%;
+  height: auto; /* إزالة الارتفاع الثابت ليتم تحديد الحجم حسب الصورة الأصلية */
+  background-color: #f3f4f6;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-preview img {
+  width: 100%;
+  height: auto; /* الحفاظ على نسبة أبعاد الصورة الأصلية تماماً بدون قص */
+  object-fit: contain;
+  display: block;
+}

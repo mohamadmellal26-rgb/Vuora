@@ -1,0 +1,143 @@
+.integrations-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.integrations-card {
+  background-color: #f8fafc;
+  border-radius: 2rem;
+  padding: 3.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .integrations-card {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* جانب النص وزر التصفح */
+.integrations-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 480px;
+}
+
+.integrations-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .integrations-title {
+    font-size: 2.75rem;
+  }
+}
+
+.highlight-green {
+  color: #22C55E;
+}
+
+.integrations-btn {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.integrations-btn:hover {
+  background-color: #16a34a;
+  transform: translateY(-1px);
+}
+
+/* حاوية الأيقونات المتحركة في اليمين */
+.integrations-grid-preview {
+  flex: 1.2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 550px;
+  height: 320px;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+/* أعمدة الحركة (كل عمود يتحرك بسرعة مختلفة قليلاً لإعطاء طابع حركي مذهل) */
+.integration-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  animation: scrollUp 20s linear infinite;
+}
+
+.integration-column:nth-child(even) {
+  animation-duration: 25s;
+  animation-direction: reverse; /* عمود يتحرك للأعلى وعمود للأسفل لتنوع الحركة، أو تجعله كله للأعلى */
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.integration-icon-box {
+  background-color: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 1rem;
+  padding: 1rem;
+  height: 70px;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease;
+}
+
+.integration-icon-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.integration-icon-box img {
+  width: 100%;
+  height: auto;
+  max-height: 36px;
+  object-fit: contain;
+  display: block;
+}

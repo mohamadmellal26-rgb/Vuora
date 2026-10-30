@@ -1,0 +1,8 @@
+.LiveStreams {
+  flex: 1; /* جعلها تتمدد لتأخذ كل المساحة المتبقية على يسار الـ Sidebar */
+  height: 100%;
+  overflow-y: auto; /* تمكين التمرير العمودي للمحتوى فقط */
+  padding: 1rem;
+  background-color: #0e0e10;
+  color: #ffffff;
+}

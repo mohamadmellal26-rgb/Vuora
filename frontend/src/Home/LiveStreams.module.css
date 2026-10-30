@@ -1,0 +1,194 @@
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  padding: 1rem 1.5rem;
+  direction: ltr; /* English layout direction */
+  text-align: left;
+  font-family: Inter, Roobert, Helvetica Neue, Helvetica, Arial, sans-serif;
+  background-color: rgba(255, 255, 255, 0.75); /* خلفية بيضاء شفافة */
+  backdrop-filter: blur(10px); /* تأثير الضبابية للخلفية الزجاجية */
+  -webkit-backdrop-filter: blur(10px);
+  color: #1f1f23; /* لون نص داكن ليتناسب مع الخلفية الفاتحة */
+  box-sizing: border-box;
+}
+
+.section {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f1f23;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* كلاس خاص لتوسيط محتوى القسم في المنتصف تماماً مع أيقونة حزينة */
+.centeredSection {
+  margin-bottom: 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.centeredTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f1f23;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  width: 100%;
+}
+
+.emptyStateContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #4b5563; /* لون رمادي مناسب للخلفيات الفاتحة */
+  font-size: 0.875rem;
+}
+
+.sadIcon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  filter: grayscale(100%); /* تحويل الصورة إلى أبيض وأسود بالكامل */
+}
+
+/* بقية الـ CSS للبطاقات والشبكة */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  background-color: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.thumbnailWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: rgba(229, 231, 235, 0.8); /* خلفية رمادية فاتحة شفافة للصورة المصغرة */
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.card:hover .thumbnailWrapper {
+  transform: translateY(-3px);
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.liveBadge {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  background-color: #eb0400;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.2rem;
+  letter-spacing: 0.05em;
+}
+
+.viewersBadge {
+  position: absolute;
+  bottom: 0.35rem;
+  left: 0.35rem;
+  background-color: rgba(255, 255, 255, 0.85); /* خلفية بيضاء شفافة لعداد المشاهدين */
+  color: #1f1f23;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.2rem;
+}
+
+.details {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  flex-direction: row;
+  width: 100%;
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  background-color: #d1d5db;
+  flex-shrink: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  text-align: left;
+}
+
+.streamTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f1f23;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 0.15rem 0;
+}
+
+.channelName {
+  font-size: 0.75rem;
+  color: #4b5563;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gameName {
+  font-size: 0.75rem;
+  color: #4b5563;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tags {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: rgba(229, 231, 235, 0.7); /* خلفية الوسوم بشكل شفاف متناسق */
+  color: #4b5563;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+}

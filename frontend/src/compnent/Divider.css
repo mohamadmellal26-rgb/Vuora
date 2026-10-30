@@ -1,0 +1,54 @@
+.divider-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  box-sizing: border-box;
+}
+
+/* الخط الداكن العريض القاطع */
+.divider-line {
+  flex-grow: 1;
+  border: none;
+  height: 2px;
+  background-color: #000000; /* اللون الأسود المغاير */
+  margin: 0;
+}
+
+/* خيارات السماكة */
+.divider-thin {
+  height: 1px;
+}
+
+.divider-medium {
+  height: 2px;
+}
+
+.divider-thick {
+  height: 4px;
+}
+
+/* خيارات الألوان */
+.divider-black {
+  background-color: #000000;
+}
+
+.divider-green {
+  background-color: #22C55E;
+}
+
+.divider-gray {
+  background-color: #E5E7EB;
+}
+
+/* النص الفاصل في المنتصف (اختياري) */
+.divider-label {
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
