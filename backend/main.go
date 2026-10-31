@@ -39,13 +39,13 @@ type ChatMessage struct {
 
 // تخزين الذاكرة المؤقتة مع قفل آمن (In-Memory Storage)
 var (
-	users       = make(map[uint]User)
-	userEmails  = make(map[string]uint) // للبحث السريع عن البريد الإلكتروني ومنع التكرار
-	streamKeys  = make(map[string]uint) // للبحث السريع عن مفتاح البث
+	users        = make(map[uint]User)
+	userEmails   = make(map[string]uint) // للبحث السريع عن البريد الإلكتروني ومنع التكرار
+	streamKeys   = make(map[string]uint) // للبحث السريع عن مفتاح البث
 	chatMessages = make(map[string][]ChatMessage)
-	nextUserID  uint = 1
-	nextMsgID   uint = 1
-	mu          sync.RWMutex
+	nextUserID   uint = 1
+	nextMsgID    uint = 1
+	mu           sync.RWMutex
 )
 
 func main() {
@@ -58,9 +58,14 @@ func main() {
 
 	r := gin.Default()
 
-	// إعداد CORS
+	// إعداد CORS ليدعم موقعك على Vercel حصرياً
+	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
+	if allowedOrigin == "" {
+		allowedOrigin = "https://vuora.vercel.app"
+	}
+
 	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
