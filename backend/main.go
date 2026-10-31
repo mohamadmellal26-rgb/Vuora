@@ -7,37 +7,46 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 var jwtSecret = []byte("super_secret_jwt_key_change_me")
 
-// User Model
+// User Model (ذاكرة RAM)
 type User struct {
-	gorm.Model
+	ID        uint   `json:"id"`
 	Name      string `json:"name"`
-	Email     string `json:"email" gorm:"unique"`
+	Email     string `json:"email"`
 	Password  string `json:"password,omitempty"`
 	IsLive    bool   `json:"is_live"`
-	StreamKey string `json:"stream_key" gorm:"unique"`
+	StreamKey string `json:"stream_key"`
 }
 
-// ChatMessage Model لتخزين الرسائل في قاعدة البيانات
+// ChatMessage Model (ذاكرة RAM)
 type ChatMessage struct {
-	gorm.Model
-	StreamKey string `json:"stream_key" gorm:"index"`
-	Username  string `json:"username"`
-	Text      string `json:"text"`
+	ID        uint      `json:"id"`
+	StreamKey string    `json:"stream_key"`
+	Username  string    `json:"username"`
+	Text      string    `json:"text"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-var DB *gorm.DB
+// تخزين الذاكرة المؤقتة مع قفل آمن (In-Memory Storage)
+var (
+	users       = make(map[uint]User)
+	userEmails  = make(map[string]uint) // للبحث السريع عن البريد الإلكتروني ومنع التكرار
+	streamKeys  = make(map[string]uint) // للبحث السريع عن مفتاح البث
+	chatMessages = make(map[string][]ChatMessage)
+	nextUserID  uint = 1
+	nextMsgID   uint = 1
+	mu          sync.RWMutex
+)
 
 func main() {
 	_ = godotenv.Load()
@@ -45,24 +54,6 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-	}
-
-	dsn := os.Getenv("DB_CONN")
-	if dsn == "" {
-		dsn = "host=localhost user=postgres password=secret dbname=mydb port=5432 sslmode=disable"
-	}
-
-	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("فشل الاتصال بقاعدة البيانات: %v", err)
-	}
-	log.Println("تم الاتصال بقاعدة البيانات بنجاح!")
-
-	// الترحيل التلقائي للجداول
-	err = DB.AutoMigrate(&User{}, &ChatMessage{})
-	if err != nil {
-		log.Fatalf("فشل ترحيل قاعدة البيانات: %v", err)
 	}
 
 	r := gin.Default()
@@ -83,7 +74,7 @@ func main() {
 	})
 
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "success", "message": "Backend is up and running!"})
+		c.JSON(200, gin.H{"status": "success", "message": "Backend is up and running with RAM storage!"})
 	})
 
 	r.POST("/register", func(c *gin.Context) {
@@ -93,28 +84,41 @@ func main() {
 			return
 		}
 
+		mu.Lock()
+		defer mu.Unlock()
+
+		// التحقق من تكرار البريد الإلكتروني
+		if _, exists := userEmails[input.Email]; exists {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "البريد الإلكتروني مستخدم مسبقاً"})
+			return
+		}
+
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "فشل تشفير كلمة المرور"})
 			return
 		}
 
-		user := User{
+		userID := nextUserID
+		nextUserID++
+
+		sKey := "live_" + generateRandomString(10)
+
+		newUser := User{
+			ID:        userID,
 			Name:      input.Name,
 			Email:     input.Email,
 			Password:  string(hashedPassword),
 			IsLive:    false,
-			StreamKey: "live_" + generateRandomString(10),
+			StreamKey: sKey,
 		}
 
-		result := DB.Create(&user)
-		if result.Error != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "البريد الإلكتروني مستخدم مسبقاً"})
-			return
-		}
+		users[userID] = newUser
+		userEmails[input.Email] = userID
+		streamKeys[sKey] = userID
 
-		user.Password = ""
-		c.JSON(http.StatusCreated, gin.H{"message": "تم التسجيل بنجاح", "user": user})
+		newUser.Password = ""
+		c.JSON(http.StatusCreated, gin.H{"message": "تم التسجيل بنجاح", "user": newUser})
 	})
 
 	r.POST("/login", func(c *gin.Context) {
@@ -124,11 +128,15 @@ func main() {
 			return
 		}
 
-		var user User
-		if err := DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		mu.RLock()
+		userID, exists := userEmails[input.Email]
+		if !exists {
+			mu.RUnlock()
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "بيانات الدخول غير صحيحة"})
 			return
 		}
+		user := users[userID]
+		mu.RUnlock()
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "بيانات الدخول غير صحيحة"})
@@ -150,37 +158,71 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "تم تسجيل الدخول بنجاح", "token": tokenString, "name": user.Name})
 	})
 
-	// --- مسار جلب بيانات مستخدم معين عبر اسم المستخدم (مخصص لصفحة المشاهدة ViewerPage) ---
+	// --- مسار جلب بيانات مستخدم معين عبر اسم المستخدم ---
 	r.GET("/user/:username", func(c *gin.Context) {
 		username := c.Param("username")
-		var user User
-		if err := DB.Where("LOWER(name) = ?", strings.ToLower(username)).First(&user).Error; err != nil {
+
+		mu.RLock()
+		defer mu.RUnlock()
+
+		var foundUser User
+		exists := false
+		for _, u := range users {
+			if strings.EqualFold(u.Name, username) {
+				foundUser = u
+				exists = true
+				break
+			}
+		}
+
+		if !exists {
 			c.JSON(http.StatusNotFound, gin.H{"error": "المستخدم غير موجود"})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"id":         user.ID,
-			"name":       user.Name,
-			"email":      user.Email,
-			"is_live":    user.IsLive,
-			"stream_key": user.StreamKey,
+			"id":         foundUser.ID,
+			"name":       foundUser.Name,
+			"email":      foundUser.Email,
+			"is_live":    foundUser.IsLive,
+			"stream_key": foundUser.StreamKey,
 		})
 	})
 
 	// --- مسار جلب قائمة المستخدمين البثاثين النشطين ---
 	r.GET("/lives", func(c *gin.Context) {
+		mu.RLock()
+		defer mu.RUnlock()
+
 		var liveUsers []User
-		DB.Where("is_live = ?", true).Select("id, name, email, stream_key, is_live").Find(&liveUsers)
+		for _, u := range users {
+			if u.IsLive {
+				liveUsers = append(liveUsers, User{
+					ID:        u.ID,
+					Name:      u.Name,
+					Email:     u.Email,
+					IsLive:    u.IsLive,
+					StreamKey: u.StreamKey,
+				})
+			}
+		}
+
 		c.JSON(http.StatusOK, liveUsers)
 	})
 
 	// --- مسارات الشات الحقيقي ---
 	r.GET("/chat/:streamKey", func(c *gin.Context) {
 		streamKey := c.Param("streamKey")
-		var messages []ChatMessage
-		DB.Where("stream_key = ?", streamKey).Order("created_at asc").Limit(100).Find(&messages)
-		c.JSON(http.StatusOK, messages)
+
+		mu.RLock()
+		defer mu.RUnlock()
+
+		msgs := chatMessages[streamKey]
+		if len(msgs) > 100 {
+			msgs = msgs[len(msgs)-100:]
+		}
+
+		c.JSON(http.StatusOK, msgs)
 	})
 
 	r.POST("/chat", func(c *gin.Context) {
@@ -194,16 +236,20 @@ func main() {
 			return
 		}
 
+		mu.Lock()
+		msgID := nextMsgID
+		nextMsgID++
+
 		msg := ChatMessage{
+			ID:        msgID,
 			StreamKey: req.StreamKey,
 			Username:  req.Username,
 			Text:      req.Text,
+			CreatedAt: time.Now(),
 		}
 
-		if err := DB.Create(&msg).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "فشل حفظ الرسالة"})
-			return
-		}
+		chatMessages[req.StreamKey] = append(chatMessages[req.StreamKey], msg)
+		mu.Unlock()
 
 		c.JSON(http.StatusCreated, msg)
 	})
@@ -223,15 +269,18 @@ func main() {
 			streamKey = streamKey[idx+1:]
 		}
 
-		var user User
-		if err := DB.Where("stream_key = ?", streamKey).First(&user).Error; err != nil {
+		mu.RLock()
+		_, exists := streamKeys[streamKey]
+		mu.RUnlock()
+
+		if !exists {
 			c.Status(http.StatusUnauthorized)
 			return
 		}
 		c.Status(http.StatusOK)
 	})
 
-	// مسار الـ Webhook المحدث لضمان إغلاق حالة البث بدقة عند إيقافه من OBS
+	// مسار الـ Webhook للتحكم بحالة البث
 	r.POST("/live/hook", func(c *gin.Context) {
 		var req struct {
 			StreamKey string `json:"stream_key"`
@@ -247,16 +296,20 @@ func main() {
 			streamKey = streamKey[idx+1:]
 		}
 
-		var user User
-		if err := DB.Where("stream_key = ?", streamKey).First(&user).Error; err != nil {
+		mu.Lock()
+		userID, exists := streamKeys[streamKey]
+		if !exists {
+			mu.Unlock()
 			c.JSON(http.StatusNotFound, gin.H{"error": "غير موجود"})
 			return
 		}
 
-		// تحديد الحالة: تصبح true فقط إذا كان الإجراء "start"، وتصبح false في أي إجراء إيقاف آخر
+		user := users[userID]
 		isLive := (req.Action == "start")
-		
-		DB.Model(&user).Update("is_live", isLive)
+		user.IsLive = isLive
+		users[userID] = user
+		mu.Unlock()
+
 		c.JSON(http.StatusOK, gin.H{"status": "success", "is_live": isLive})
 	})
 
@@ -266,9 +319,16 @@ func main() {
 	{
 		authorized.GET("/profile", func(c *gin.Context) {
 			userID, _ := c.Get("user_id")
-			var user User
-			DB.First(&user, userID)
-			user.Password = ""
+
+			mu.RLock()
+			user, exists := users[userID.(uint)]
+			mu.RUnlock()
+
+			if !exists {
+				c.JSON(http.StatusNotFound, gin.H{"error": "المستخدم غير موجود"})
+				return
+			}
+
 			c.JSON(http.StatusOK, gin.H{
 				"id":          user.ID,
 				"name":        user.Name,
@@ -281,14 +341,19 @@ func main() {
 
 		authorized.POST("/live/toggle", func(c *gin.Context) {
 			userID, _ := c.Get("user_id")
-			var user User
-			if err := DB.First(&user, userID).Error; err != nil {
+
+			mu.Lock()
+			user, exists := users[userID.(uint)]
+			if !exists {
+				mu.Unlock()
 				c.JSON(http.StatusNotFound, gin.H{"error": "المستخدم غير موجود"})
 				return
 			}
 
 			newLiveState := !user.IsLive
-			DB.Model(&user).Update("is_live", newLiveState)
+			user.IsLive = newLiveState
+			users[userID.(uint)] = user
+			mu.Unlock()
 
 			c.JSON(http.StatusOK, gin.H{
 				"is_live":     newLiveState,
@@ -298,7 +363,7 @@ func main() {
 		})
 	}
 
-	log.Printf("السيرفر يعمل على المنفذ: %s", port)
+	log.Printf("السيرفر يعمل على المنفذ (تخزين داخل الذاكرة RAM): %s", port)
 	r.Run(":" + port)
 }
 
