@@ -881,4 +881,4 @@ pathDefaults:
 # for example "~^prefix" will match all paths that start with "prefix".
 paths:
   all_others:
-    runOnAvailable: "curl -s -X POST http://localhost:8080/live/auth -H 'Content-Type: application/json' -d '{\"streamKey\":\"$MTX_PATH\"}'"
+    runOnAvailable: "curl -s -X POST https://vuora.onrender.com/live/auth -H 'Content-Type: application/json' -d '{\"streamKey\":\"$MTX_PATH\"}'"
